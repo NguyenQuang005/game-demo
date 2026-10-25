@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>GÓC HẺM ĐÊM SÀI GÒN: Second Chance 🌧️🐱</title>
+<link rel="stylesheet" href="css/style.css">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🐱</text></svg>">
+</head>
+<body>
+<canvas id="game"></canvas>
+
+<!-- ============ HUD TRÊN ============ -->
+<div id="hud-top" class="glass">
+  <div class="brand">🏮 GÓC HẺM ĐÊM</div>
+  <div class="chip" id="chip-clock"><span id="clock-icon">🌙</span><span id="clock-text">18:00</span></div>
+  <div class="chip money" id="chip-wallet">🐾 50.000₫</div>
+  <div class="chip" id="chip-cakho" title="Cá Khô — chăm sóc & cứu trợ mèo">🐟 <span>10</span></div>
+  <div class="chip gold" id="chip-pate" title="Pate — chữa bệnh & chiêu mộ mèo">🥫 <span>2</span></div>
+  <div class="chip" id="chip-fund" title="Quỹ Hợp Tác Xã khu phố">🤝 <span>0₫</span></div>
+  <div class="chip chapter" id="chip-chapter" title="Hồi truyện hiện tại">📖 Hồi 1</div>
+  <div class="chip event" id="event-badge">🌧️ Mưa đêm</div>
+  <div class="hud-btns">
+    <button id="btn-story" class="hbtn" title="Cốt truyện & nhiệm vụ">📖</button>
+    <button id="btn-evidence" class="hbtn" title="Bảng Hồ Sơ Minh Oan (12 chứng cứ)">🧩</button>
+    <button id="btn-event" class="hbtn" title="Chuyển không khí (Tết / Noel / Thường)">🎊</button>
+    <button id="btn-mic" class="hbtn" title="Bật/Tắt Mic (V)">🎙️</button>
+    <button id="btn-speaker" class="hbtn" title="Bật/Tắt Loa">🔊</button>
+    <button id="btn-help" class="hbtn" title="Hướng dẫn">❓</button>
+  </div>
+</div>
+
+<!-- ============ TICKER TIN KINH TẾ VỈA HÈ ============ -->
+<div id="ticker"><div id="ticker-text">📡 Kênh Tin Kinh Tế Vỉa Hè — sàn VN-Index Phố Đêm cập nhật mỗi 5 giây...</div></div>
+
+<!-- ============ BẢNG NHIỆM VỤ TỪNG BƯỚC (QUEST COMPASS) ============ -->
+<div id="quest-hud" class="glass hidden">
+  <div id="quest-name">📖 Nhiệm vụ</div>
+  <div id="quest-step">...</div>
+  <button id="quest-auto">🧭 Tự động tìm đường</button>
+</div>
+
+<!-- ============ CHAT ============ -->
+<div id="chat-panel">
+  <div id="chat-log"></div>
+  <form id="chat-form" autocomplete="off">
+    <input id="chat-input" placeholder="Nói chuyện với cả hẻm..." maxlength="140">
+    <button type="submit">gửi</button>
+  </form>
+</div>
+
+<!-- ============ THANH HÀNH ĐỘNG (PC) ============ -->
+<div id="emote-bar" class="glass hidden"></div>
+<div id="action-bar">
+  <button class="abtn" data-panel="shop-cafe"><span class="key">1</span>☕</button>
+  <button class="abtn" data-panel="shop-pho"><span class="key">2</span>🍜</button>
+  <button class="abtn" data-panel="shop-bbq"><span class="key">3</span>🍢</button>
+  <button class="abtn" data-panel="shop-net"><span class="key">4</span>🖥️</button>
+  <button class="abtn" data-panel="shop-karaoke"><span class="key">5</span>🎤</button>
+  <button class="abtn" data-panel="shelter"><span class="key">T</span>🐱</button>
+  <button class="abtn" data-panel="furn"><span class="key">B</span>🛋️</button>
+  <button class="abtn" data-panel="stock"><span class="key">S</span>📈</button>
+  <button class="abtn" data-panel="ship"><span class="key">F</span>🏍️</button>
+  <button class="abtn" data-panel="baucua"><span class="key">X</span>🎲</button>
+</div>
+
+<!-- ============ NÚT ĐỘNG (MOBILE) ============ -->
+<div id="mob-actions">
+  <button class="mbtn" data-panel="shelter">🐱</button>
+  <button class="mbtn" data-panel="stock">📈</button>
+  <button class="mbtn" data-panel="ship">🏍️</button>
+  <button class="mbtn" data-panel="baucua">🎲</button>
+  <button class="mbtn" id="mob-emote">😊</button>
+  <button class="mbtn" id="mob-interact">✋</button>
+</div>
+<div id="joystick"><div id="joy-base"><div id="joy-knob"></div></div></div>
+
+<!-- ============ NÚT RA HẺM (khi trong nhà) ============ -->
+<button id="btn-exit" class="glass hidden">⬅ Ra hẻm [E]</button>
+
+<!-- ============ MODAL SHELL ============ -->
+<div id="modal-wrap" class="hidden">
+  <div id="modal" class="glass">
+    <div id="modal-head"><span id="modal-title">Quán</span><button id="modal-close">✕</button></div>
+    <div id="modal-body"></div>
+  </div>
+</div>
+
+<!-- ============ HỘP THOẠI VISUAL NOVEL ============ -->
+<div id="vn-wrap" class="hidden">
+  <div id="vn-box">
+    <div id="vn-portrait"><canvas id="vn-portrait-cv" width="150" height="170"></canvas></div>
+    <div id="vn-dialog">
+      <div id="vn-name">???</div>
+      <div id="vn-text">...</div>
+      <div id="vn-hint">▾ Bấm / Space để tiếp tục</div>
+    </div>
+  </div>
+  <button id="vn-skip">Bỏ qua ▶▶</button>
+</div>
+
+<!-- ============ CUTSCENE OVERLAY (kịch tính, không che thế giới) ============ -->
+<div id="cutscene-title" class="hidden"><span id="cutscene-text"></span></div>
+
+<!-- ============ MINIGAME ============ -->
+<div id="mini-wrap" class="hidden">
+  <div id="mini-box" class="glass">
+    <div id="mini-head"><span id="mini-title">Minigame</span><button id="mini-quit">Thoát</button></div>
+    <canvas id="mini-canvas" width="640" height="420"></canvas>
+    <div id="mini-hud"></div>
+  </div>
+</div>
+
+<!-- ============ RESCUE FX ============ -->
+<div id="gacha-wrap" class="hidden">
+  <canvas id="gacha-canvas" width="800" height="600"></canvas>
+  <div id="gacha-skip">Bỏ qua ▶▶</div>
+</div>
+
+<!-- ============ QTE ============ -->
+<div id="qte-wrap" class="hidden">
+  <div id="qte-box">
+    <div id="qte-title">⚠️ CHÓ RƯỢT! VỐT NHANH!!!</div>
+    <div id="qte-bar"><div id="qte-fill"></div></div>
+    <button id="qte-btn">VỐT! VỐT! VỐT!</button>
+  </div>
+</div>
+
+<div id="toasts"></div>
+<div id="hint" class="hidden"></div>
+
+<!-- ============ LOGIN ============ -->
+<div id="login-wrap">
+  <div id="login-box" class="glass">
+    <h1>🏮 GÓC HẺM ĐÊM SÀI GÒN</h1>
+    <h2>Second Chance — Chuyện ở đầu con hẻm 🌧️🐱</h2>
+    <input id="login-name" placeholder="Tên của bạn (Minh?)" maxlength="16">
+    <div id="look-picker"></div>
+    <input id="login-room" placeholder="Room (mặc định: hem-saigon)" value="hem-saigon">
+    <button id="login-btn">🌧️ BƯỚC VÀO HẺM</button>
+    <p class="login-tip">WASD/Click đi lại · E tương tác · 1–5 quán · T Trạm cứu trợ · G Chiêu mộ · S Chứng khoán · F Shipper · V Mic<br>Mobile: Joystick + cụm nút phải</p>
+  </div>
+</div>
+
+<script src="/socket.io/socket.io.js"></script>
+<script src="js/graphics.js"></script>
+<script src="js/audio.js"></script>
+<script src="js/game.js"></script>
+</body>
+</html>
